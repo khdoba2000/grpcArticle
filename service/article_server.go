@@ -66,7 +66,6 @@ func (server *ArticleServer) Create(
 		return nil, status.Error(codes.Unknown, "failed to insert into articles-> "+err.Error())
 	}
 
-
 	return &proto.CreateArticleResponse{
 		Id: int32(LastInsertId),
 	}, nil
@@ -92,13 +91,14 @@ func (server *ArticleServer) Read(
 
 	// Query entity data
 	// dynamic
-	insertDynStmt := `SELECT ("id", "title", "descr", "content") FROM "article2" WHERE id=$1`
+	insertDynStmt := `SELECT "id", "title", "descr", "content" FROM "article2" WHERE id=$1`
 
 	rows, err := database.QueryContext(ctx, insertDynStmt, req.Id)
 
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "failed to GET from articles-> "+err.Error())
 	}
+	defer rows.Close()
 
 	if !rows.Next() {
 		if err := rows.Err(); err != nil {
@@ -111,11 +111,11 @@ func (server *ArticleServer) Read(
 	// get Article data
 	var article proto.Article
 	if err := rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Content); err != nil {
-		return nil, status.Error(codes.Unknown, "failed to retrieve field values from ToDo row-> "+err.Error())
+		return nil, status.Error(codes.Unknown, "failed to retrieve field values from Article row-> "+err.Error())
 	}
 
 	if rows.Next() {
-		return nil, status.Error(codes.Unknown, fmt.Sprintf("found multiple ToDo rows with ID='%d'",
+		return nil, status.Error(codes.Unknown, fmt.Sprintf("found multiple Article rows with ID='%d'",
 			req.Id))
 	}
 
@@ -134,12 +134,12 @@ func (server *ArticleServer) Update(ctx context.Context, req *proto.UpdateArticl
 	}
 	defer c.Close()
 
-	// update ToDo
+	// update Article
 
 	res, err := c.ExecContext(ctx, `update "article2" set "title"=$2, "descr"=$3, "content"=$4 where "id"=$1`,
-		req.Article.Title, req.Article.Desc, req.Article.Content, req.Article.Id)
+		req.Article.Id, req.Article.Desc, req.Article.Content, req.Article.Title)
 	if err != nil {
-		return nil, status.Error(codes.Unknown, "failed to update ToDo-> "+err.Error())
+		return nil, status.Error(codes.Unknown, "failed to update Article-> "+err.Error())
 	}
 
 	rows, err := res.RowsAffected()
@@ -156,7 +156,7 @@ func (server *ArticleServer) Update(ctx context.Context, req *proto.UpdateArticl
 	}, nil
 }
 
-// Delete todo task
+// Delete Article
 func (server *ArticleServer) Delete(ctx context.Context, req *proto.DeleteArticleRequest) (*proto.DeleteArticleResponse, error) {
 
 	// get SQL connection from pool
@@ -169,7 +169,7 @@ func (server *ArticleServer) Delete(ctx context.Context, req *proto.DeleteArticl
 	// delete Article
 	res, err := c.ExecContext(ctx, `delete from "article2" where id=$1`, req.Id)
 	if err != nil {
-		return nil, status.Error(codes.Unknown, "failed to delete ToDo-> "+err.Error())
+		return nil, status.Error(codes.Unknown, "failed to delete Article-> "+err.Error())
 	}
 
 	rows, err := res.RowsAffected()
@@ -187,7 +187,7 @@ func (server *ArticleServer) Delete(ctx context.Context, req *proto.DeleteArticl
 	}, nil
 }
 
-// Read all todo tasks
+// Read all Articles
 func (server *ArticleServer) ReadAll(ctx context.Context, req *proto.ReadAllArticleRequest) (*proto.ReadAllArticleResponse, error) {
 
 	// get SQL connection from pool
@@ -196,18 +196,18 @@ func (server *ArticleServer) ReadAll(ctx context.Context, req *proto.ReadAllArti
 		return nil, err
 	}
 	defer c.Close()
-	// get ToDo list
+	// get Article list
 	rows, err := c.QueryContext(ctx, `SELECT "id", "title", "descr", "content" FROM "article2"`)
 
 	if err != nil {
-		return nil, status.Error(codes.Unknown, "failed to select from ToDo-> "+err.Error())
+		return nil, status.Error(codes.Unknown, "failed to select from Article-> "+err.Error())
 	}
 	defer rows.Close()
 
 	list := []*proto.Article{}
 	for rows.Next() {
 		article := new(proto.Article)
-		if err := rows.Scan(&article.Id, &article.Title, &article.Desc); err != nil {
+		if err := rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Content); err != nil {
 			return nil, status.Error(codes.Unknown, "failed to retrieve field values from Article row-> "+err.Error())
 		}
 
