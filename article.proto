@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "/";
+option java_multiple_files = true;
+option java_package = "github.com/khdoba2000/grpc-artiles";
+option java_outer_classname = "article-grpc";
+
+
+message Article {
+    int64 id = 1;
+    string title = 2;
+    string desc = 3;
+    string content = 4;
+}
+
+message CreateArticleRequest {
+    Article article = 1;
+} 
+
+message CreateArticleResponse {
+    int32 id = 1;
+}
+
+message ReadArticleRequest {
+    int32 id = 1;
+
+} 
+
+message ReadArticleResponse {
+    Article article = 1;
+
+}
+
+message UpdateArticleRequest {
+    Article article = 1;
+} 
+
+message UpdateArticleResponse {
+    int32 updated = 1;
+}
+
+message DeleteArticleRequest {
+    int32 id = 1;
+} 
+
+message DeleteArticleResponse {
+    int32 deleted = 1;
+}
+
+
+// Request data to read all artocles
+message ReadAllArticleRequest{
+}
+
+// Contains list of all Articles
+message ReadAllArticleResponse{
+
+    // List of all articles
+    repeated Article articles = 1;
+}
+
+
+service ArticleService{
+
+    // Create new  article 
+    rpc Create(CreateArticleRequest) returns (CreateArticleResponse);
+
+    // Read article
+    rpc Read(ReadArticleRequest) returns (ReadArticleResponse);
+
+    // Update article
+    rpc Update(UpdateArticleRequest) returns (UpdateArticleResponse);
+
+    // Delete article
+    rpc Delete(DeleteArticleRequest) returns (DeleteArticleResponse);
+
+    // Read all articles
+    rpc ReadAll(ReadAllArticleRequest) returns (ReadAllArticleResponse);
+
+}
