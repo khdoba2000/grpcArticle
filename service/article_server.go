@@ -14,7 +14,7 @@ import (
 
 type ArticleServer struct {
 	db *sql.DB
-	proto.UnimplementedArticleServiceServer
+	proto.UnimplementedArticleServiceServer //
 }
 
 func NewArticleServiceServer(db *sql.DB) *ArticleServer {
@@ -221,8 +221,4 @@ func (server *ArticleServer) ReadAll(ctx context.Context, req *proto.ReadAllArti
 	return &proto.ReadAllArticleResponse{
 		Articles: list,
 	}, nil
-}
-
-func mustEmbedUnimplementedArticleServiceServer() {
-
 }

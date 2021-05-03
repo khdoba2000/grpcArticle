@@ -21,11 +21,11 @@ func main() {
 	}
 
 	ArticleClient := proto.NewArticleServiceClient(conn)
-    ////Create
+    // //Create
 	// article := &proto.Article{
-	// 	Title:   "title55 sdasdadjk",
-	// 	Desc:    "description55 (desssss",
-	// 	Content: "content55 conteeeeeeeeent",
+	// 	Title:   "title999 sdasdadjk",
+	// 	Desc:    "descripti9995 (desssss",
+	// 	Content: "content999 conteeeeeeeeent",
 	// }
 
 	// req := proto.CreateArticleRequest{
@@ -69,23 +69,23 @@ func main() {
 
 
 
-	// // Call ReadAll
-	// req4 := proto.ReadAllArticleRequest{}
-	// res4, err := ArticleClient.ReadAll(context.Background(), &req4)
-	// if err != nil {
-	// 	log.Fatalf("ReadAll failed: %v", err)
-	// }
-	// log.Printf("ReadAll result: <%+v>\n\n", res4)
+	// Call ReadAll
+	req4 := proto.ReadAllArticleRequest{}
+	res4, err := ArticleClient.ReadAll(context.Background(), &req4)
+	if err != nil {
+		log.Fatalf("	ReadAll failed: %v", err)
+	}
+	log.Printf("ReadAll result: <%+v>\n\n", res4)
 
 	
 	// Delete
-	req5 := proto.DeleteArticleRequest{
-		Id:  4,
-	}
-	res5, err := ArticleClient.Delete(context.Background(), &req5)
-	if err != nil {
-		log.Fatalf("Delete failed: %v", err)
-	}
-	log.Printf("Delete result: <%+v>\n\n", res5)
+	// req5 := proto.DeleteArticleRequest{
+	// 	Id:  6,
+	// }
+	// res5, err := ArticleClient.Delete(context.Background(), &req5)
+	// if err != nil {
+	// 	log.Fatalf("Delete failed: %v", err)
+	// }
+	// log.Printf("Delete result: <%+v>\n\n", res5)
 
 }

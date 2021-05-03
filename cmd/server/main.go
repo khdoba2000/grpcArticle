@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net"
@@ -14,17 +13,18 @@ import (
 )
 
 func main() {
-	port := flag.Int("port", 0, "the server port")
-	flag.Parse()
-	log.Printf("Start server on port: %d", *port)
+	// port := flag.Int("port", 0, "the server port")
+	// flag.Parse()
+	// log.Printf("Start server on port: %d", *port)
 
 	db := config.Connect()
-	ArticleServer := service.NewArticleServiceServer(db)
+	ArticleServiceServer := service.NewArticleServiceServer(db)
+
 	grpcServer := grpc.NewServer()
-	proto.RegisterArticleServiceServer(grpcServer, ArticleServer)
+	proto.RegisterArticleServiceServer(grpcServer, ArticleServiceServer)
 
 	//address := fmt.Sprintf("0.0.0.0:%d", *port)
-	listener, err := net.Listen("tcp", ":2000")
+	listener, err := net.Listen("tcp", "0.0.0.0:2000")
 	fmt.Print("Started server on 2000")
 	if err != nil {
 		log.Fatal("Cannot start server: ", err)
